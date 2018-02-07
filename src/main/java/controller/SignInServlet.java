@@ -4,10 +4,7 @@ import accounter.AccountService;
 import accounter.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,9 +24,7 @@ public class SignInServlet {
                 .stream()
                 .filter(user -> user.getLogin().equals(login) && user.getPass().equals(pass))
                 .findAny();
-        if (any.isPresent()) {
-            return new ResponseEntity<>("Authorized:" + any.get().getLogin(),HttpStatus.OK);
-        }else
-            return new ResponseEntity<>("Unauthorized",HttpStatus.NOT_FOUND);
+        return any.<ResponseEntity>map(user -> new ResponseEntity<>("Authorized:" + user.getLogin(), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>("Unauthorized", HttpStatus.NOT_FOUND));
     }
 }
