@@ -3,6 +3,7 @@ package main.deft.accounter;
 public class User {
     private String login;
     private String pass;
+    private String description;
 
     public User() {
     }
@@ -26,5 +27,13 @@ public class User {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
