@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class AccountService {
     @Autowired
@@ -30,7 +31,14 @@ public class AccountService {
         return loginToProfile.get(login);
     }
 
-    public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
+    public Optional<User> getUser(String login, String password) {
+        if (loginToProfile.isEmpty()) {
+            return getUserFromDB(login, password);
+        }
+        return loginToProfile.values().stream().filter(v -> login.equals(v.getLogin())).findAny();
+    }
+
+    public Optional<User> getUserFromDB(String login, String password) {
+        return Optional.ofNullable(userRepository.getUserByLoginEqualsAndPasswordEquals(login, password));
     }
 }

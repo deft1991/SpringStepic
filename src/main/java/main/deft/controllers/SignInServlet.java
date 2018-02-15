@@ -1,5 +1,6 @@
 package main.deft.controllers;
 
+import com.sun.javafx.css.CssError;
 import main.deft.dataBase.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,12 @@ public class SignInServlet {
     @ResponseStatus(value = HttpStatus.OK)
     public ResponseEntity signIn(@RequestParam final String login, @RequestParam String password) throws ServiceException {
         Optional<User> any = accountService
-                .getAllUsers()
-                .stream()
-                .filter(user -> user.getLogin().equals(login))
-                .findAny();
-        return any.<ResponseEntity>map(user -> new ResponseEntity<>("Authorized: " + user.getLogin(), HttpStatus.OK))
+                .getUser(login, password);
+        return getRepMsg(any);
+    }
+
+    private ResponseEntity getRepMsg(Optional<User> user) {
+        return user.<ResponseEntity>map(u -> new ResponseEntity<>("Authorized: " + u.getLogin(), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>("Unauthorized", HttpStatus.NOT_FOUND));
     }
 }
